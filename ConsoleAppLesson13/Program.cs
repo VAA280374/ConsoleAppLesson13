@@ -11,6 +11,7 @@ namespace ConsoleAppLesson13
         static void Main(string[] args)
         {
             Bilding bilding = new Bilding();
+            MultiBilding multiBilding = new MultiBilding();
             
             Console.Write("Введите адрес здания или застройки : ");
             bilding.Adress = Console.ReadLine();
@@ -22,24 +23,28 @@ namespace ConsoleAppLesson13
             Console.Write("Введите высоту здания в мм : ");
             bilding.Higth = Convert.ToInt32(Console.ReadLine());
 
-
-
             bilding.Print();
+            Console.WriteLine();
+
+            multiBilding.Adress = bilding.Adress;
+            multiBilding.Lenghts = bilding.Lenghts;
+            multiBilding.Width = bilding.Width;
+            multiBilding.Higth = bilding.Higth;
+            Console.Write("Введите этажность здания : ");
+            multiBilding.Levels = Convert.ToInt32(Console.ReadLine());
+
+            multiBilding.MultyPrint();
 
             Console.ReadKey();
         }
         public class Bilding
         {
-            private string adress = "NAN";
-            private int lenghts = 0; // В мм, как принято в строительной документации.
-            private int width = 0; // В мм, как принято в строительной документации.
-            private int hight = 0; // В мм, как принято в строительной документации.
+            private protected string adress = "NAN";
+            private protected int lenghts = 0; // В мм, как принято в строительной документации.
+            private protected int width = 0; // В мм, как принято в строительной документации.
+            private protected int hight = 0; // В мм, как принято в строительной документации.
             public Bilding ()
             { 
-                // this .adress = _adress;
-                // this .lenghts = _lenghts;
-                // this .width = _width;
-                // this .hight = _hight;
             }
             public string Adress 
             {
@@ -104,6 +109,52 @@ namespace ConsoleAppLesson13
                 Console.WriteLine("Здание находится по адресу : {0}", Adress);
                 Console.WriteLine("Ширины и гланого и бокового фасадов составляют соответственно : {0} и {1}", Lenghts, Width);
                 Console.WriteLine("Высота здания составляет : {0}", Higth);
+            }
+        }
+        sealed class MultiBilding : Bilding
+        { 
+            private int levels = 0; // этажность
+            private const int MinLevelHight = 2700;
+            
+            public int Levels
+            {
+                set
+                {
+                    if (value > 1)
+                    {
+                        if (hight >= MinLevelHight)
+                        {
+                            if (value <= hight / MinLevelHight)
+                            { 
+                                this.levels = value; 
+                            }
+                            else
+                            {
+                                this.levels = this.hight / MinLevelHight;
+                                Console.WriteLine("ЗДАНИЕ ТАКОЙ ВЫСОТЫ : {0} НЕ МОЖЕТ ИМЕТЬ ЭТАЖНОСТЬ БОЛЕЕ {1}", this.hight, this.levels);
+                            }
+                        }
+                        else
+                        {
+                            this.levels = 1;
+                            Console.WriteLine("ЗДАНИЕ ТАКОЙ ВЫСОТЫ : {0} НЕ МОЖЕТ ИМЕТЬ ЭТАЖНОСТЬ ОТЛИЧНУЮ ОТ 1", Higth);
+                        }
+                    }
+                    else
+                    {
+                        this.levels = 1;
+                        Console.WriteLine("ЗДАНИЕ НЕ МОЖЕТ ИМЕТЬ ЭТАЖНОСТЬ МЕНЕЕ 1");
+                    }
+                }
+                
+                get 
+                { return levels; } 
+            }
+
+            public void MultyPrint()
+            {
+                Print();
+                Console.WriteLine("Этажность здания составляет : {0}", levels);
             }
         }
     }
